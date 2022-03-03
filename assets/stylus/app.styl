@@ -1,0 +1,577 @@
+@import 'global'
+
+/**
+ * Login */
+#login
+    position: relative
+    height: 100vh
+    background-image: linear-gradient(45deg, $dark_primary, $primary)
+    .wrapper
+        position: absolute
+        top: 50%
+        left: 0
+        right: 0
+        width: 100%
+        max-width: 1280px
+        margin: 0 auto
+        display: flex
+        flex-flow: row wrap
+        justify-content: flex-start
+        border-radius: 10px
+        transform: translateY(-50%)
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.3)
+        .left
+            flex: 0 0 60%
+            img
+                border-radius: 10px 0 0 10px
+                width: 100%
+                height: 450px
+                object-fit: cover
+        .right
+            border-radius: 0 10px 10px 0
+            flex: 1 0 5%
+            position: relative
+            background-color: $white
+            .overlay
+                position: absolute
+                top: 50%
+                left: 0
+                right: 0
+                padding: 30px
+                transform: translateY(-50%)
+                h2
+                    brandon_medium(32px, false)
+                    color: $black
+                h3
+                    brandon_light(18px, false)
+                    color: $gray
+                    margin: 10px 0 20px
+                .action
+                    margin-top: 30px
+
+/**
+ * Header */
+#header
+    position: fixed
+    top: 30px
+    z-index: 2
+    right: 30px
+    width: 100%
+    max-width: calc(100% - 320px)
+    display: flex
+    flex-flow: row wrap
+    align-items: center
+    justify-content: space-between
+    border-radius: 5px
+    background-color: $white
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1)
+    transition: .3s ease-in-out
+    .header_nav
+        display: flex
+        flex-flow: row wrap
+        align-items: center
+        justify-content: space-between
+        padding: 0 20px
+        .title
+            brandon_bold(18px, true)
+            color: $dark_primary
+            letter-spacing: 0.25px
+            padding-right: 10px
+        #breadcrumb
+            padding-left: 10px
+            border-left: 1px solid #E2E2E2
+    .header_select
+        position: relative
+        border-left: 1px solid #E2E2E2
+        user-select: none
+        &::before
+            content: ''
+            position: absolute
+            top: 50%
+            right: calc(0% + 15px)
+            width: 0
+            border-left: 7px solid transparent
+            border-right: 7px solid transparent
+            border-top: 7px solid $primary
+            transform: translateY(-50%) rotateX(0deg)
+            transition: .3s ease-in-out
+        .header_user
+            padding: 10px 40px 10px 15px
+            display: flex
+            flex-flow: row wrap
+            align-items: center
+            cursor: pointer
+            img
+                display: inline-block
+                margin-right: 5px
+                width: 33px
+                height: 33px
+                border-radius: 50%
+                object-fit: cover
+                object-position: center
+                border: 2px solid $dark_primary
+            .user_picture
+                position: relative
+                text-transform: uppercase
+                width: 35px
+                height: 35px
+                background-image: linear-gradient(45deg, $dark_primary, $primary)
+                border-radius: 50%
+                margin-right: 10px
+                .overlay
+                    position: absolute
+                    top: 50%
+                    left: 0
+                    right: 0
+                    text-align: center
+                    transform: translateY(-50%)
+                    color: $white
+                    brandon_regular(14px, false)
+            .user_name
+                brandon_regular(16px, false)
+                color: $black
+        .user_select
+            position: absolute
+            right: 0
+            top: calc(100% + 30px)
+            z-index: 1
+            width: 300px
+            border-radius: 5px
+            background-color: $white
+            opacity: 0
+            visibility: hidden
+            box-shadow: 15px 25px 40px rgba(0, 0, 0, 0.05)
+            transition: all .2s ease-in-out
+            a
+                text-decoration: none
+                outline: none
+                display: block
+            .select_header
+                display: flex
+                flex-flow: row wrap
+                align-items: center
+                justify-content: space-between
+                padding: 20px
+                background-image: linear-gradient(45deg, $dark_primary, $primary)
+                border-radius: 5px 5px 0 0
+                .select_info
+                    .header_name
+                        brandon_regular(16px, false)
+                        color: $white
+                    .header_role
+                        brandon_light(14px, false)
+                        color: #F8F8FB
+                        margin-top: 5px
+                .header_studio
+                    .action_btn
+                        flex: 0 0 auto
+            .select_footer
+                display: flex
+                justify-content: space-between
+                .select_item
+                    position: relative
+                    brandon_regular(14px, false)
+                    color: $black
+                    padding: 10px 15px
+                    transition: .3s ease-in-out
+                    &.account
+                        span
+                            padding-left: 10px
+                    &.logout
+                        span
+                            padding-right: 10px
+                    &:hover
+                        color: $primary
+                        transition: .3s ease-in-out
+
+        &.active
+            &::before
+                transform: translateY(-50%) rotateX(180deg)
+                transition: .3s ease-in-out
+            .user_select
+                top: 100%
+                visibility: visible
+                opacity: 1
+                transition: all .2s ease-in-out
+
+/**
+ * Sidebar */
+#sidebar
+    position: fixed
+    top: 0
+    left: 0
+    z-index: 7
+    width: 100%
+    max-width: 260px
+    height: 100vh
+    background-color: $white
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1)
+    transition: .3s ease-in-out
+    &.floating
+        max-width: 65px
+        .top
+            h2
+                position: absolute
+                top: -9999999px
+                left: -9999999px
+                z-index: -2
+                brandon_bold(0px, false)
+            .toggle
+                opacity: 0
+                visibility: hidden
+                transition: .1s ease-in-out
+        .bottom
+            .list
+                .item
+                    .link
+                        brandon_regular(0px, false)
+                        span
+                            position: absolute
+                            top: -9999999px
+                            left: -9999999px
+                            z-index: -1
+                        &.parent
+                            &::after
+                                opacity: 0
+                                visibility: hidden
+                                transition: .3s ease-in-out
+                    .sub,
+                    .inner_sub
+                        .sub_list
+                            .sub_item
+                                .sub_link
+                                    brandon_regular(0px, false)
+                                    span
+                                        position: absolute
+                                        top: -9999999px
+                                        left: -9999999px
+                                        z-index: -1
+        &.hovered
+            max-width: 260px
+            transition: .3s ease-in-out
+            .top
+                justify-content: flex-start
+                h2
+                    position: static
+                    left: 0
+                    z-index: 1
+                    brandon_bold(18px, false)
+                .toggle
+                    opacity: 1
+                    visibility: visible
+            .bottom
+                .list
+                    .item
+                        .link
+                            brandon_regular(16px, false)
+                            justify-content: flex-start
+                            span
+                                position: static
+                                left: 0
+                                z-index: 1
+                            &.parent
+                                &::after
+                                    opacity: 1
+                                    visibility: visible
+                                    transition: .3s ease-in-out
+                        .sub,
+                        .inner_sub
+                            .sub_list
+                                .sub_item
+                                    .sub_link
+                                        brandon_regular(16px, false)
+                                        justify-content: flex-start
+                                        span
+                                            position: static
+                                            left: 0
+                                            z-index: 1
+    .top
+        position: relative
+        padding: 20px 7px
+        display: flex
+        flex-flow: row wrap
+        align-items: center
+        justify-content: flex-start
+        transition: .3s ease-in-out .3s
+        img
+            width: 50px
+            height: auto
+            transition: .3s ease-in-out .3s
+        h2
+            padding-left: 10px
+            brandon_bold(16px, false)
+            color: $gray
+            transition: .3s ease-in-out .3s
+        .toggle
+            position: absolute
+            top: 50%
+            right: 10px
+            opacity: 1
+            visibility: visible
+            transform: translateY(-50%)
+            transition: .3s ease-in-out .3s
+            svg
+                color: $primary
+    .shadow
+        position: absolute
+        margin-top: -20px
+        margin-left: -5px
+        z-index: 2
+        height: 60px
+        width: 100%
+        pointer-events: none
+        -webkit-filter: blur(5px)
+        filter: blur(5px)
+        background: -webkit-gradient(linear,left top,left bottom,color-stop(41%,#fff),color-stop(95%,hsla(0,0%,100%,.11)),to(hsla(0,0%,100%,0)))
+    .bottom
+        height: 100%
+        overflow-y: auto
+        padding: 30px 10px 20px
+        .list
+            list-style: none
+            padding: 0
+            margin: 0
+            .item
+                margin-bottom: 5px
+                &:last-child
+                    margin-bottom: 0
+                &.toggled
+                    .link
+                        background-color: $gray_v2
+                        transition: .3s ease-in-out
+                        & ~ .sub,
+                            .inner_sub
+                            opacity: 1
+                            transition: .3s ease-in-out
+                        &.parent
+                            &::after
+                                transform: translateY(-50%) rotateX(180deg)
+                                transition: .3s ease-in-out
+                    .sub,
+                    .inner_sub
+                        opacity: 1
+                .link
+                    display: flex
+                    flex-flow: row wrap
+                    align-items: center
+                    justify-content: flex-start
+                    position: relative
+                    z-index: 1
+                    padding: 7.5px 10px
+                    brandon_regular(16px, false)
+                    color: $gray
+                    border-radius: 5px
+                    box-shadow: 0 0 20px transparent
+                    background-color: transparent
+                    transition: .3s ease-in-out
+                    &.parent
+                        &.exact,
+                        &.active
+                            color: $gray
+                            box-shadow: 0 0 20px transparent
+                            padding: 7.5px 10px
+                            background-color: $gray_v2
+                            transition: .3s ease-in-out
+                            svg
+                                &.icon
+                                    opacity: 1
+                                    stroke: $primary
+                                    transition: .3s ease-in-out
+                            &::before
+                                opacity: 0
+                                visibility: hidden
+                                transition: .3s ease-in-out
+                        &::after
+                            content: ''
+                            pointer-events: none
+                            position: absolute
+                            top: 50%
+                            right: 10px
+                            z-index: 1
+                            border-top: 7px solid $primary
+                            border-left: 7px solid transparent
+                            border-right: 7px solid transparent
+                            transform: translateY(-50%) rotateX(0deg)
+                            transition: .3s ease-in-out
+                    .link_icon
+                        pointer-events: none
+                        flex: 0 0 auto
+                        padding-bottom: 3px
+                    svg
+                        position: inherit
+                        z-index: 1
+                        &.icon
+                            opacity: 1
+                            transition: .3s ease-in-out
+                    span
+                        pointer-events: none
+                        display: inline-block
+                        padding-left: 10px
+                        position: inherit
+                        z-index: 1
+                        transform: translateX(0)
+                        transition: .3s ease-in-out
+                    &::before
+                        content: ''
+                        position: absolute
+                        pointer-events: none
+                        top: 0
+                        left: 0
+                        right: 0
+                        bottom: 0
+                        opacity: 0
+                        z-index: 0
+                        visibility: hidden
+                        background-image: linear-gradient(45deg, $dark_primary, $primary)
+                        border-radius: 5px
+                        transition: .3s ease-in-out
+                    &:hover
+                        padding: 7.5px 10px 7.5px 15px
+                        background-color: $gray_v2
+                        transition: .3s ease-in-out
+                    &.exact,
+                    &.active
+                        color: $white
+                        box-shadow: 0 0 20px rgba(0, 132, 176, 0.5)
+                        transition: .3s ease-in-out
+                        svg
+                            &.icon
+                                opacity: 0.8
+                                stroke: $white
+                                transition: .3s ease-in-out
+                        &::before
+                            opacity: 1
+                            visibility: visible
+                            transition: .3s ease-in-out
+                .sub,
+                .inner_sub
+                    display: block
+                    height: 0px
+                    overflow: hidden
+                    opacity: 0
+                    transition: .3s ease-in-out
+                    .sub_list
+                        list-style: none
+                        padding: 0
+                        margin: 0
+                        .sub_item,
+                        .inner_sub_item
+                            margin-bottom: 5px
+                            &:last-child
+                                margin-bottom: 0
+                            .sub_link
+                                display: flex
+                                flex-flow: row wrap
+                                align-items: center
+                                justify-content: flex-start
+                                position: relative
+                                padding: 7.5px 15px
+                                brandon_regular(16px, false)
+                                color: $gray
+                                border-radius: 5px
+                                box-shadow: 0 0 20px transparent
+                                transition: .3s ease-in-out
+                                .sub_link_icon
+                                    flex: 0 0 auto
+                                    padding-bottom: 3px
+                                svg
+                                    width: 15px
+                                    height: 15px
+                                    position: inherit
+                                    z-index: 1
+                                    &.icon
+                                        opacity: 1
+                                        transition: .3s ease-in-out
+                                span
+                                    display: inline-block
+                                    padding-left: 10px
+                                    position: inherit
+                                    z-index: 1
+                                    transform: translateX(0)
+                                    transition: .3s ease-in-out
+                                &::before
+                                    content: ''
+                                    position: absolute
+                                    top: 0
+                                    left: 0
+                                    right: 0
+                                    bottom: 0
+                                    opacity: 0
+                                    z-index: 0
+                                    visibility: hidden
+                                    background-image: linear-gradient(45deg, $dark_primary, $primary)
+                                    border-radius: 5px
+                                    transition: .3s ease-in-out
+                                &:hover
+                                    padding: 7.5px 10px 7.5px 20px
+                                    transition: .3s ease-in-out
+                                &.exact,
+                                &.active
+                                    color: $white
+                                    box-shadow: 0 0 20px rgba(0, 132, 176, 0.5)
+                                    transition: .3s ease-in-out
+                                    svg
+                                        &.icon
+                                            opacity: 0.8
+                                            stroke: $white
+                                            transition: .3s ease-in-out
+                                    &::before
+                                        opacity: 1
+                                        visibility: visible
+                                        transition: .3s ease-in-out
+                            &.toggled
+                                .sub,
+                                .inner_sub
+                                    opacity: 1
+                            .sub
+                                padding-left: 20px
+                        .inner_sub_item
+                            padding-left: 20px
+                            .link
+                                background: transparent
+                                &.sub_parent
+                                    &::after
+                                        content: ''
+                                        pointer-events: none
+                                        position: absolute
+                                        top: 50%
+                                        right: 10px
+                                        z-index: 1
+                                        border-top: 7px solid #0084b0
+                                        border-left: 7px solid transparent
+                                        border-right: 7px solid transparent
+                                        transform: translateY(-50%) rotateX(0deg)
+                                        transition: 0.3s ease-in-out
+                                    &::before
+                                        content: ''
+                                        position: absolute
+                                        pointer-events: none
+                                        top: 0
+                                        left: 0
+                                        right: 0
+                                        bottom: 0
+                                        opacity: 0
+                                        z-index: 0
+                                        visibility: hidden
+                                        background-image: linear-gradient(
+                                        45deg
+                                        , #020f1d, #0084b0)
+                                        border-radius: 5px
+                                        transition: 0.3s ease-in-out
+                                .sub_link_icon
+                                    svg
+                                        width: 20px
+                            .sub
+                                .inner_sub_list
+                                    padding-left: 20px
+                                    li
+                                        list-style: none
+                                        a
+                                            &.nuxt-link-active
+                                                color: $white
+                                                box-shadow: 0 0 20px rgba(0, 132, 176, 0.5)
+                                                transition: .3s ease-in-out
+                                                background-image: linear-gradient(45deg, #020f1d, #0084b0)
+                            &.toggled
+                                .link
+                                    background: transparent
