@@ -30,9 +30,10 @@ export default {
   plugins: [
     { src: '~/plugins/v-select.js', ssr: false },
     { src: '~/plugins/vue-ctk-date-time-picker', ssr: false },
+    { src: '~/plugins/vue-datepicker', ssr: false },
     { src: '~/plugins/vee-validate' },
     { src: '~/plugins/vue-click-outside' },
-    { src: '~/plugins/mixins'}
+    { src: '~/plugins/mixins'},
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

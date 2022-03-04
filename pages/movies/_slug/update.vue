@@ -98,7 +98,7 @@
 
                         me.$axios.post('/api/movies', form_data).then(res => {
                             me.$store.dispatch('global/toast/addToast', { type: 'success', message: 'Item has been added!' })
-                            // me.$router.push(`/movies/${res.data.id}/update`)
+                            // me.$router.push(`/content-types/media/${res.data.media.id}/update`)
                         }).catch(err => {
                             me.$store.commit('global/catcher/populateErrors', { items: err.response.data.errors })
                         }).then(() => {
