@@ -18,23 +18,23 @@
 					<div class="group_inline two">
 						<div class="group bordered filled">
 							<label for="name">Title *</label>
-							<input type="text" class="input" name="title" autocomplete="off" placeholder="Enter Title" v-model="form.title" v-validate="{ required: true }">
+							<input type="text" class="input" name="title" autocomplete="off" placeholder="Enter Title" v-model="res.title" v-validate="{ required: true }">
 							<transition name="slide"><span class="validate" v-if="errors.has('title')">{{ properFormat(errors.first('title')) }}</span></transition>
 						</div>
 						<div class="group bordered filled">
 							<label for="release_year">Release Year *</label>
-							<date-picker v-model="form.release_year" :format="DatePickerFormat" data-vv-name="release_year" minimum-view="year" id="release_year"  name="release_year" input-class="field-input" v-validate="{ required: true }" />
+							<date-picker v-model="res.release_year" :format="DatePickerFormat" data-vv-name="release_year" minimum-view="year" id="release_year"  name="release_year" input-class="field-input" v-validate="{ required: true }" />
 							<transition name="slide"><span class="validate" v-if="errors.has('release_year')">{{ properFormat(errors.first('release_year')) }}</span></transition>
 						</div>
 					</div>
 					<div class="group bordered filled">
 						<label for="name">Genres *</label>
-						<v-select multiple v-model="form.genres" name="genres" :options="['action','drama']" v-validate="{ required: true }" />
+						<v-select multiple v-model="res.genres" name="genres" :options="res.genres" v-validate="{ required: true }" />
 						<transition name="slide"><span class="validate" v-if="errors.has('genres')">{{ properFormat(errors.first('genres')) }}</span></transition>
 					</div>
 					<div class="group bordered filled">
 						<label for="name">Casts *</label>
-						<v-select multiple v-model="form.casts" name="casts" :options="['humi','Unieter']" v-validate="{ required: true }" />
+						<v-select multiple v-model="res.casts" name="casts" :options="['humi','Unieter']" v-validate="{ required: true }" />
 						<transition name="slide"><span class="validate" v-if="errors.has('casts')">{{ properFormat(errors.first('casts')) }}</span></transition>
 					</div>
 					<div class="group bordered filled">
@@ -64,7 +64,7 @@
     export default {
         data () {
             return {
-                loaded: true,
+                loaded: false,
                 form: {
                     title: '',
                     release_year: '2022',
@@ -73,6 +73,7 @@
 					image: null
                 },
 				DatePickerFormat: 'yyyy',
+				res: []
             }
         },
         methods: {
@@ -113,7 +114,47 @@
 						})
                     }
                 })
-            }
-        }
+            },
+			/**
+				* ready state method
+				* check if DOM is still in the interactive state
+				* @param  {[object]} event [event listener of DOM]
+				*/
+			initialization (event) {
+				const me = this
+				me.loaded = false
+				me.$axios.get(`/api/movies/${me.$route.params.slug}`).then(res => {
+					if (res.data.id) {
+						me.res = res.data
+					}
+					else {
+						me.$nuxt.error({ statusCode: 404, message: 'Page not found' })
+					}
+				}).catch(err => {
+					me.$store.commit('global/catcher/populateErrors', { items: err.response.data.errors })
+				}).then(() => {
+					setTimeout( () => {
+						me.$store.commit('global/loader/checkLoader', { status: false })
+						document.body.classList.remove('no_scroll', 'no_click')
+					}, 500)
+					me.loaded = true
+				})
+			}
+        },
+		mounted () {
+			const me = this
+			me.initialization()
+		
+		},
+		asyncData ({ store }) {
+			store.commit('global/settings/populateTitle', { title: 'Movies' })
+			store.commit('global/loader/checkLoader', { status: true })
+		},
+		beforeMount () {
+			window.addEventListener('load', this.initialization)
+		},
+		beforeDestroy () {
+			window.removeEventListener('load', this.initialization)
+		}
     }
 </script>

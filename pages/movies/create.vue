@@ -29,12 +29,12 @@
 					</div>
 					<div class="group bordered filled">
 						<label for="name">Genres *</label>
-						<v-select multiple v-model="form.genres" name="genres" :options="['action','drama']" v-validate="{ required: true }" />
+						<v-select multiple v-model="form.genres" name="genres" :options="genres" v-validate="{ required: true }" />
 						<transition name="slide"><span class="validate" v-if="errors.has('genres')">{{ properFormat(errors.first('genres')) }}</span></transition>
 					</div>
 					<div class="group bordered filled">
 						<label for="name">Casts *</label>
-						<v-select multiple v-model="form.casts" name="casts" :options="['humi','Unieter']" v-validate="{ required: true }" />
+						<v-select multiple v-model="form.casts" name="casts" :options="casts" v-validate="{ required: true }" />
 						<transition name="slide"><span class="validate" v-if="errors.has('casts')">{{ properFormat(errors.first('casts')) }}</span></transition>
 					</div>
 					<div class="group bordered filled">
@@ -45,15 +45,15 @@
 							style="display: none"
 							ref="fileInput"
 							accept="image/*"
-							name="thumbnail"
+							name="image"
 							v-validate="{ required: true }"
 							@change="onFilePicked"/>
-						<transition name="slide"><span class="validate" v-if="errors.has('thumbnail')">{{ properFormat(errors.first('thumbnail')) }}</span></transition>
+						<transition name="slide"><span class="validate" v-if="errors.has('image')">{{ properFormat(errors.first('image')) }}</span></transition>
 					</div>
 				</div>
 			</div>
 			<div class="buttons fixed">
-				<nuxt-link to="/articles" class="cancel_button half_width btn lg">Cancel</nuxt-link>
+				<nuxt-link to="/movies" class="cancel_button half_width btn lg">Cancel</nuxt-link>
 				<button type="submit" class="success_button half_width btn lg pointer">Submit</button>
 			</div>
         </form>
@@ -64,7 +64,7 @@
     export default {
         data () {
             return {
-                loaded: true,
+                loaded: false,
                 form: {
                     title: '',
                     release_year: '2022',
@@ -73,6 +73,8 @@
 					image: null
                 },
 				DatePickerFormat: 'yyyy',
+				casts: [],
+				genres: []
             }
         },
         methods: {
@@ -90,11 +92,36 @@
 				this.form.image = files[0]
 			},
             submit () {
+
 				const me = this
                 me.$validator.validateAll().then(valid => {
                     if (valid) {
                         me.$store.commit('global/loader/checkLoader', { status: true })
                         let form_data = new FormData(document.getElementById('form'))
+
+						if (me.form.casts.length) {
+							me.form.casts.forEach((item, index) => {
+								if( item == 0 ) {
+									form_data.append('cast_id[]', '')
+								} else {
+									form_data.append('cast_id[]', item.id)
+								}
+							})
+						} else {
+							form_data.append('cast_id[]', '')
+						}
+
+						if (me.form.genres.length) {
+							me.form.genres.forEach((item, index) => {
+								if( item == 0 ) {
+									form_data.append('genre_id[]', '')
+								} else {
+									form_data.append('genre_id[]', item.id)
+								}
+							})
+						} else {
+							form_data.append('genre_id[]', '')
+						}
 
                         me.$axios.post('/api/movies', form_data).then(res => {
                             me.$store.dispatch('global/toast/addToast', { type: 'success', message: 'Item has been added!' })
@@ -113,7 +140,45 @@
 						})
                     }
                 })
+            },
+			/**
+             * fetch all api
+             * @param  {[string]} [status=null] [checker if initial load or note]
+             */
+            fetchData (status = null) {
+                const me = this
+                me.$axios.get('api/genres-and-casts').then(res => {
+                    me.genres = res.data.genres
+					me.casts = res.data.casts
+                }).catch(err => {
+                    me.$store.commit('global/catcher/populateErrors', { items: err.response.data.errors })
+                }).then(() => {
+                    setTimeout( () => {
+                        me.$store.commit('global/loader/checkLoader', { status: false })
+                        if (status) {
+                            me.loaded = true
+                        }
+                        document.body.classList.remove('no_scroll', 'no_click')
+                    }, 500)
+                    me.loaded = true
+                })
+            },
+            /**
+             * ready state method
+             * check if DOM is still in the interactive state
+             * @param  {[object]} event [event listener of DOM]
+             */
+            initialization (event) {
+                const me = this
+                if (document.readyState != 'interactive') {
+                    me.fetchData('initial')
+                    me.$store.commit('global/loader/checkLoader', { status: false })
+                    document.body.classList.remove('no_scroll', 'no_click')
+                }
             }
-        }
+        },
+		mounted () {
+            this.initialization()
+        },
     }
 </script>
