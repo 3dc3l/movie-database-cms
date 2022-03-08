@@ -29,31 +29,36 @@
 					</div>
 					<div class="group bordered filled">
 						<label for="name">Genres *</label>
-						<v-select multiple v-model="res.genres" name="genres" :options="res.genres" v-validate="{ required: true }" />
+						<v-select multiple v-model="form.genres" name="genres" :options="genres" v-validate="{ required: true }" />
 						<transition name="slide"><span class="validate" v-if="errors.has('genres')">{{ properFormat(errors.first('genres')) }}</span></transition>
 					</div>
 					<div class="group bordered filled">
 						<label for="name">Casts *</label>
-						<v-select multiple v-model="res.casts" name="casts" :options="['humi','Unieter']" v-validate="{ required: true }" />
+						<v-select multiple v-model="res.casts" name="casts" :options="casts" v-validate="{ required: true }" />
 						<transition name="slide"><span class="validate" v-if="errors.has('casts')">{{ properFormat(errors.first('casts')) }}</span></transition>
 					</div>
 					<div class="group bordered filled">
 						<label for="name">Image *</label>
-						<button class="btn btn-info" @click="onPickFile">Upload Thumbnail</button>
 						<input
 							type="file"
 							style="display: none"
 							ref="fileInput"
 							accept="image/*"
-							name="thumbnail"
+							name="image"
 							v-validate="{ required: true }"
-							@change="onFilePicked"/>
-						<transition name="slide"><span class="validate" v-if="errors.has('thumbnail')">{{ properFormat(errors.first('thumbnail')) }}</span></transition>
+							@change="onFilePicked"
+							class="edit_thumbnail"
+							v-if="is_enabled" />
+						<transition name="slide"><span class="validate" v-if="errors.has('form.image')">{{ properFormat(errors.first('form.image')) }}</span></transition>
+					</div>
+					<div class="image_preview">
+						<img :src="current_image" alt="">
+						<div class="success_button pointer" @click="onPickFile()">Change Image</div>
 					</div>
 				</div>
 			</div>
 			<div class="buttons fixed">
-				<nuxt-link to="/articles" class="cancel_button half_width btn lg">Cancel</nuxt-link>
+				<nuxt-link to="/movies" class="cancel_button half_width btn lg">Cancel</nuxt-link>
 				<button type="submit" class="success_button half_width btn lg pointer">Submit</button>
 			</div>
         </form>
@@ -73,14 +78,23 @@
 					image: null
                 },
 				DatePickerFormat: 'yyyy',
-				res: []
+				res: [],
+				current_image: null,
+				genres: [],
+				casts: [],
+				is_enabled: false
             }
         },
+		inject: ['$validator'],
         methods: {
 			onPickFile () {
-				this.$refs.fileInput.click()
+				this.is_enabled = true
+				setTimeout( () => {
+					this.$refs.fileInput.click()
+				}, 500)
 			},
 			onFilePicked (event) {
+				console.log('event')
 				const files = event.target.files
 				let filename = files[0].name
 				const fileReader = new FileReader()
@@ -88,6 +102,7 @@
 					this.imageUrl = fileReader.result
 				})
 				fileReader.readAsDataURL(files[0])
+				this.current_image = URL.createObjectURL(files[0]);
 				this.form.image = files[0]
 			},
             submit () {
@@ -96,10 +111,35 @@
                     if (valid) {
                         me.$store.commit('global/loader/checkLoader', { status: true })
                         let form_data = new FormData(document.getElementById('form'))
+						form_data.append('_method', 'PATCH')
 
-                        me.$axios.post('/api/movies', form_data).then(res => {
+						if (me.res.casts.length) {
+							me.res.casts.forEach((item, index) => {
+								if( item == 0 ) {
+									form_data.append('cast_id[]', '')
+								} else {
+									form_data.append('cast_id[]', item.id)
+								}
+							})
+						} else {
+							form_data.append('cast_id[]', '')
+						}
+
+						if (me.res.genres.length) {
+							me.form.genres.forEach((item, index) => {
+								if( item == 0 ) {
+									form_data.append('genre_id[]', '')
+								} else {
+									form_data.append('genre_id[]', item.id)
+								}
+							})
+						} else {
+							form_data.append('genre_id[]', '')
+						}
+
+                        me.$axios.put(`/api/movies/${me.$route.params.slug}`, form_data).then(res => {
                             me.$store.dispatch('global/toast/addToast', { type: 'success', message: 'Item has been added!' })
-                            // me.$router.push(`/content-types/media/${res.data.media.id}/update`)
+                            me.$router.push(`/movies`)
                         }).catch(err => {
                             me.$store.commit('global/catcher/populateErrors', { items: err.response.data.errors })
                         }).then(() => {
@@ -126,6 +166,8 @@
 				me.$axios.get(`/api/movies/${me.$route.params.slug}`).then(res => {
 					if (res.data.id) {
 						me.res = res.data
+						me.form.genres = res.data.genres
+						me.current_image = res.data.get_image_url
 					}
 					else {
 						me.$nuxt.error({ statusCode: 404, message: 'Page not found' })
@@ -139,6 +181,22 @@
 					}, 500)
 					me.loaded = true
 				})
+
+				me.$axios.get('api/genres-and-casts').then(res => {
+                    me.genres = res.data.genres
+					me.casts = res.data.casts
+                }).catch(err => {
+                    me.$store.commit('global/catcher/populateErrors', { items: err.response.data.errors })
+                }).then(() => {
+                    setTimeout( () => {
+                        me.$store.commit('global/loader/checkLoader', { status: false })
+                        if (status) {
+                            me.loaded = true
+                        }
+                        document.body.classList.remove('no_scroll', 'no_click')
+                    }, 500)
+                    me.loaded = true
+                })
 			}
         },
 		mounted () {
@@ -158,3 +216,15 @@
 		}
     }
 </script>
+<style lang="stylus">
+	.edit_thumbnail
+		diplay: none
+	.image_preview
+		display: flex
+		flex-direction: column
+		img
+			height: 400px
+			object-fit: contain
+			object-position: center
+			background: #80808029
+</style>

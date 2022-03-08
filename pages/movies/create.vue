@@ -39,7 +39,6 @@
 					</div>
 					<div class="group bordered filled">
 						<label for="name">Image *</label>
-						<button class="btn btn-info" @click="onPickFile">Upload Thumbnail</button>
 						<input
 							type="file"
 							style="display: none"
@@ -48,6 +47,10 @@
 							name="image"
 							v-validate="{ required: true }"
 							@change="onFilePicked"/>
+					</div>
+					<div class="image_preview">
+						<img :src="current_image" alt=""  v-if="form.image">
+						<div class="success_button pointer" @click="onPickFile()">{{ (form.image) ? 'Change Thumbnail' : 'Add Thumbnail' }}</div>
 						<transition name="slide"><span class="validate" v-if="errors.has('image')">{{ properFormat(errors.first('image')) }}</span></transition>
 					</div>
 				</div>
@@ -74,7 +77,8 @@
                 },
 				DatePickerFormat: 'yyyy',
 				casts: [],
-				genres: []
+				genres: [],
+				current_image: ''
             }
         },
         methods: {
@@ -89,6 +93,7 @@
 					this.imageUrl = fileReader.result
 				})
 				fileReader.readAsDataURL(files[0])
+				this.current_image = URL.createObjectURL(files[0]);
 				this.form.image = files[0]
 			},
             submit () {
@@ -125,7 +130,8 @@
 
                         me.$axios.post('/api/movies', form_data).then(res => {
                             me.$store.dispatch('global/toast/addToast', { type: 'success', message: 'Item has been added!' })
-                            // me.$router.push(`/movies/${res.data.id}/update`)
+                            me.$router.push(`/movies`)
+
                         }).catch(err => {
                             me.$store.commit('global/catcher/populateErrors', { items: err.response.data.errors })
                         }).then(() => {

@@ -59,17 +59,37 @@
 				</tr>
 			</tbody>
         </table>
+
+        <!-- Confirmation -->
+        <delete-confirmation
+            ref="confirmation"
+            :item="'movies'"
+            :api="api"
+        />
     </div>
 </template>
 <script>
+	import DeleteConfirmation from '~/components/global/DeleteConfirmation'
+
     export default {
+        components: {
+			DeleteConfirmation
+        },
         data () {
             return {
                 res: [],
                 loaded: false,
+                api: '',
             }
         },
         methods: {
+            toggleConfirmation (data) {
+                const me = this
+                setTimeout( () => {
+                    me.api = `/api/movies/${data.id}`
+                    me.$refs.confirmation.opened = true
+                }, 10)
+            },
             /**
              * fetch all api
              * @param  {[string]} [status=null] [checker if initial load or note]
