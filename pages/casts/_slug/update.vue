@@ -1,8 +1,8 @@
 <template>
-    <div id="movie" class="page" v-if="loaded">
+    <div id="cast" class="page" v-if="loaded">
         <!-- Back Action Item -->
 		<div class="actions">
-			<nuxt-link :to="`/movies`" class="primary_button pointer">
+			<nuxt-link :to="`/casts`" class="primary_button pointer">
 				<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
 				<span>Back</span>
 			</nuxt-link>
@@ -15,28 +15,33 @@
 					<h2>Information</h2>
 				</div>
 				<div class="bottom_box">
-					<div class="group_inline two">
+					<div class="group_inline four">
 						<div class="group bordered filled">
-							<label for="name">Title *</label>
-							<input type="text" class="input" name="title" autocomplete="off" placeholder="Enter Title" v-model="res.title" v-validate="{ required: true }">
-							<transition name="slide"><span class="validate" v-if="errors.has('title')">{{ properFormat(errors.first('title')) }}</span></transition>
+							<label for="first_name">First Name *</label>
+							<input type="text" class="input" name="first_name" autocomplete="off" placeholder="Enter First Name" v-model="res.first_name" v-validate="{ required: true }">
+							<transition name="slide"><span class="validate" v-if="errors.has('first_name')">{{ properFormat(errors.first('first_name')) }}</span></transition>
 						</div>
-						<div class="group bordered filled">
-							<label for="release_year">Release Year *</label>
-							<date-picker v-model="res.release_year" :format="DatePickerFormat" data-vv-name="release_year" minimum-view="year" id="release_year"  name="release_year" input-class="field-input" v-validate="{ required: true }" />
-							<transition name="slide"><span class="validate" v-if="errors.has('release_year')">{{ properFormat(errors.first('release_year')) }}</span></transition>
+                        <div class="group bordered filled">
+							<label for="middle_name">Middle Name *</label>
+							<input type="text" class="input" name="middle_name" autocomplete="off" placeholder="Enter Middle Name" v-model="res.middle_name" v-validate="{ required: true }">
+							<transition name="slide"><span class="validate" v-if="errors.has('middle_name')">{{ properFormat(errors.first('middle_name')) }}</span></transition>
+						</div>
+                        <div class="group bordered filled">
+							<label for="last_name">Last Name *</label>
+							<input type="text" class="input" name="last_name" autocomplete="off" placeholder="Enter Last Name" v-model="res.last_name" v-validate="{ required: true }">
+							<transition name="slide"><span class="validate" v-if="errors.has('last_name')">{{ properFormat(errors.first('last_name')) }}</span></transition>
+						</div>
+                        <div class="group bordered filled">
+							<label for="suffix">Suffix *</label>
+							<input type="text" class="input" name="suffix" autocomplete="off" placeholder="Enter Suffix" v-model="res.suffix" v-validate="{ required: true }">
+							<transition name="slide"><span class="validate" v-if="errors.has('suffix')">{{ properFormat(errors.first('suffix')) }}</span></transition>
 						</div>
 					</div>
-					<div class="group bordered filled">
-						<label for="name">Genres *</label>
-						<v-select multiple v-model="form.genres" name="genres" :options="genres" v-validate="{ required: true }" />
-						<transition name="slide"><span class="validate" v-if="errors.has('genres')">{{ properFormat(errors.first('genres')) }}</span></transition>
-					</div>
-					<div class="group bordered filled">
-						<label for="name">Casts *</label>
-						<v-select multiple v-model="res.casts" name="casts" :options="casts" v-validate="{ required: true }" />
-						<transition name="slide"><span class="validate" v-if="errors.has('casts')">{{ properFormat(errors.first('casts')) }}</span></transition>
-					</div>
+                     <div class="group bordered filled">
+                        <label for="stage_name">Stage Name *</label>
+                        <input type="text" class="input" name="stage_name" autocomplete="off" placeholder="Enter Stage Name" v-model="res.stage_name" v-validate="{ required: true }">
+                        <transition name="slide"><span class="validate" v-if="errors.has('stage_name')">{{ properFormat(errors.first('stage_name')) }}</span></transition>
+                    </div>
 					<div class="group bordered filled">
 						<label for="name">Image *</label>
 						<input
@@ -58,7 +63,7 @@
 				</div>
 			</div>
 			<div class="buttons fixed">
-				<nuxt-link to="/movies" class="cancel_button half_width btn lg">Cancel</nuxt-link>
+				<nuxt-link to="/casts" class="cancel_button half_width btn lg">Cancel</nuxt-link>
 				<button type="submit" class="success_button half_width btn lg pointer">Submit</button>
 			</div>
         </form>
@@ -71,17 +76,15 @@
             return {
                 loaded: false,
                 form: {
-                    title: '',
-                    release_year: '2022',
-                    genres: [],
-                    casts: [],
+                    first_name: '',
+                    middle_name: '',
+                    last_name: '',
+                    suffix: '',
+                    stage_name: '',
 					image: null
                 },
-				DatePickerFormat: 'yyyy',
 				res: [],
 				current_image: null,
-				genres: [],
-				casts: [],
 				is_enabled: false
             }
         },
@@ -113,33 +116,9 @@
                         let form_data = new FormData(document.getElementById('form'))
 						form_data.append('_method', 'PATCH')
 
-						if (me.res.casts.length) {
-							me.res.casts.forEach((item, index) => {
-								if( item == 0 ) {
-									form_data.append('cast_id[]', '')
-								} else {
-									form_data.append('cast_id[]', item.id)
-								}
-							})
-						} else {
-							form_data.append('cast_id[]', '')
-						}
-
-						if (me.res.genres.length) {
-							me.form.genres.forEach((item, index) => {
-								if( item == 0 ) {
-									form_data.append('genre_id[]', '')
-								} else {
-									form_data.append('genre_id[]', item.id)
-								}
-							})
-						} else {
-							form_data.append('genre_id[]', '')
-						}
-
-                        me.$axios.put(`/api/movies/${me.$route.params.slug}`, form_data).then(res => {
+                        me.$axios.put(`/api/casts/${me.$route.params.slug}`, form_data).then(res => {
                             me.$store.dispatch('global/toast/addToast', { type: 'success', message: 'Item has been added!' })
-                            me.$router.push(`/movies`)
+                            me.$router.push(`/casts`)
                         }).catch(err => {
                             me.$store.commit('global/catcher/populateErrors', { items: err.response.data.errors })
                         }).then(() => {
@@ -163,10 +142,9 @@
 			initialization (event) {
 				const me = this
 				me.loaded = false
-				me.$axios.get(`/api/movies/${me.$route.params.slug}`).then(res => {
+				me.$axios.get(`/api/casts/${me.$route.params.slug}`).then(res => {
 					if (res.data.id) {
 						me.res = res.data
-						me.form.genres = res.data.genres
 						me.current_image = res.data.get_image_url
 					}
 					else {
@@ -181,22 +159,6 @@
 					}, 500)
 					me.loaded = true
 				})
-
-				me.$axios.get('api/genres-and-casts').then(res => {
-                    me.genres = res.data.genres
-					me.casts = res.data.casts
-                }).catch(err => {
-                    me.$store.commit('global/catcher/populateErrors', { items: err.response.data.errors })
-                }).then(() => {
-                    setTimeout( () => {
-                        me.$store.commit('global/loader/checkLoader', { status: false })
-                        if (status) {
-                            me.loaded = true
-                        }
-                        document.body.classList.remove('no_scroll', 'no_click')
-                    }, 500)
-                    me.loaded = true
-                })
 			}
         },
 		mounted () {
@@ -205,7 +167,7 @@
 		
 		},
 		asyncData ({ store }) {
-			store.commit('global/settings/populateTitle', { title: 'Movies' })
+			store.commit('global/settings/populateTitle', { title: 'Casts' })
 			store.commit('global/loader/checkLoader', { status: true })
 		},
 		beforeMount () {
