@@ -12,12 +12,12 @@
                     <h3>Welcome back, Please login to continue</h3>
                     <form class="form" id="action" @submit.prevent="submit()">
                         <div class="group floating">
-                            <input type="text" :class="[ 'input', (form.user.email.length > 0) ? 'filled' : '' ]" name="email" autofocus autocomplete="off" v-model="form.user.email" v-validate="{ required: true, email: true }">
+                            <input type="text" :class="[ 'input', (form.admin.email.length > 0) ? 'filled' : '' ]" name="email" autofocus autocomplete="off" v-model="form.admin.email" v-validate="{ required: true, email: true }">
                             <label for="email">Email Address</label>
                             <transition name="slide"><span class="validate" v-if="errors.has('email')">{{ properFormat(errors.first('email')) }}</span></transition>
                         </div>
                         <div class="group floating">
-                            <input type="password" :class="[ 'input', (form.user.password.length > 0) ? 'filled' : '' ]" name="password" autocomplete="off" v-model="form.user.password" v-validate="{ required: true }">
+                            <input type="password" :class="[ 'input', (form.admin.password.length > 0) ? 'filled' : '' ]" name="password" autocomplete="off" v-model="form.admin.password" v-validate="{ required: true }">
                             <label for="password">Password</label>
                             <transition name="slide"><span class="validate" v-if="errors.has('password')">{{ properFormat(errors.first('password')) }}</span></transition>
                         </div>
@@ -37,7 +37,7 @@
             return {
                 loaded: false,
                 form: {
-                    user: {
+                    admin: {
                         email: '',
                         password: ''
                     }

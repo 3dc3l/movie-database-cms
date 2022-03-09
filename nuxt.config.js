@@ -60,13 +60,13 @@ export default {
           // type: 'Bearer'
         },
         user: {
-          property: 'user',
+          property: 'admin',
           // autoFetch: true
         },
         endpoints: {
-          login: { url: '/users/sign_in', method: 'post', propertyName: 'token' },
-          logout: { url: '/users/sign_out', method: 'delete' },
-          user: { url: '/users/current', method: 'get', propertyName: 'user' }
+          login: { url: '/admins/sign_in', method: 'post', propertyName: 'token' },
+          logout: { url: '/admins/sign_out', method: 'delete' },
+          user: { url: '/admins/current', method: 'get', propertyName: 'admin' }
         }
       }
     }
