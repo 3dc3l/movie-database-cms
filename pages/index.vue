@@ -90,7 +90,7 @@
         },
         mounted () {
             const me = this
-            me.initialization()
+            // me.initialization()
         },
         asyncData ({ store }) {
             store.commit('global/loader/checkLoader', { status: true })
