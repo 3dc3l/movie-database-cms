@@ -92,15 +92,15 @@
             const me = this
             // me.initialization()
         },
-        asyncData ({ store }) {
-            store.commit('global/loader/checkLoader', { status: true })
-        },
-        beforeMount () {
-            window.addEventListener('load', this.initialization)
-        },
-        beforeDestroy () {
-            window.removeEventListener('load', this.initialization)
-        },
+        // asyncData ({ store }) {
+        //     store.commit('global/loader/checkLoader', { status: true })
+        // },
+        // beforeMount () {
+        //     window.addEventListener('load', this.initialization)
+        // },
+        // beforeDestroy () {
+        //     window.removeEventListener('load', this.initialization)
+        // },
         head () {
             return {
                 title: 'Welcome | Admin Template'
