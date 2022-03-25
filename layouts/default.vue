@@ -2,13 +2,13 @@
     <div :class="[ '__db', (has_toggled) ? 'full' : '' ]">
 
          <transition name="fade">
-            <topbar v-if="authenticated" />
+            <topbar v-if="$auth.loggedIn" />
         </transition>
 
         <Nuxt />
         
         <transition name="fade">
-            <sidebar v-if="authenticated" />
+            <sidebar v-if="$auth.loggedIn" />
         </transition>
         
         <catcher />
@@ -51,7 +51,8 @@
             ...mapGetters ({
                 has_loaded: 'global/loader/hasLoaded',
                 has_toggled: 'global/sidebar/hasToggled',
-                toasts: 'global/toast/getToasts'
+                toasts: 'global/toast/getToasts',
+                is_show: 'global/sidebar/is_show'
             })
         },
         methods: {
@@ -79,6 +80,7 @@
         },
         mounted () {
             const me = this
+            me.$store.commit('global/sidebar/checkShow', true)
 
             if (!me.routes.includes(me.$route.path)) {
                 me.validateToken()

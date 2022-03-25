@@ -4,5 +4,8 @@ export default {
     },
     hasToggled (state) {
         return state.toggled
+    },
+    is_show (state) {
+        return state.is_show
     }
 }
