@@ -33,7 +33,7 @@
 						</div>
                         <div class="group bordered filled">
 							<label for="suffix">Suffix *</label>
-							<input type="text" class="input" name="suffix" autocomplete="off" placeholder="Enter Suffix" v-model="res.suffix" v-validate="{ required: true }">
+							<input type="text" class="input" name="suffix" autocomplete="off" placeholder="Enter Suffix" v-model="res.suffix" >
 							<transition name="slide"><span class="validate" v-if="errors.has('suffix')">{{ properFormat(errors.first('suffix')) }}</span></transition>
 						</div>
 					</div>
